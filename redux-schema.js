@@ -1,6 +1,11 @@
 {
   users: {
+    isAuthed,
+    isFetching,
+    error,
+    authedId,
     [uid]: {
+      lastUpdated,
       info: {
         name,
         uid,
@@ -9,7 +14,13 @@
     }
   }
 },
+modal: {
+  duck,
+  isOpen,
+}
 ducks: {
+  isFetching,
+  error,
   [duckId]: {
     info: {
       avatar,
