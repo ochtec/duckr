@@ -6,8 +6,9 @@
   ],
   "env": {
     "start": {
-      "presets": [
-        "react-hmre"
+      "plugins": [
+        "react-hot-loader/babel",
+        "transform-object-rest-spread"
       ]
     }
   }
