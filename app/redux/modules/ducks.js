@@ -1,4 +1,4 @@
-import { saveDuck } from 'helpers/api'
+import { saveDuck, fetchDuck } from 'helpers/api'
 import { closeModal } from './modal'
 import { addSingleUsersDuck } from './usersDucks'
 
@@ -16,6 +16,7 @@ function fetchingDuck () {
 }
 
 function fetchingDuckError (error) {
+  console.warn(error)
   return {
     type: FETCHING_DUCK_ERROR,
     error: 'Error fetching Duck',
@@ -29,7 +30,7 @@ function fetchingDuckSuccess (duck) {
   }
 }
 
-function removeFetchign () {
+export function removeFetching () {
   return {
     type: REMOVE_FETCHING,
   }
@@ -46,10 +47,10 @@ export function duckFanout (duck) {
   return function (dispatch, getState) {
     const uid = getState().users.authedId
     saveDuck(duck)
-      .then((duckWithId) => {
-        dispatch(addDuck(duckWithId))
+      .then((duckWithID) => {
+        dispatch(addDuck(duckWithID))
         dispatch(closeModal())
-        dispatch(addSingleUsersDuck(uid, duckWithId.duckId))
+        dispatch(addSingleUsersDuck(uid, duckWithID.duckId))
       })
       .catch((err) => {
         console.warn('Error in duckFanout', err)
@@ -64,11 +65,19 @@ export function addMultipleDucks (ducks) {
   }
 }
 
+export function fetchAndHandleDuck (duckId) {
+  return function (dispatch, getState) {
+    dispatch(fetchingDuck())
+    fetchDuck(duckId)
+      .then((duck) => dispatch(fetchingDuckSuccess(duck)))
+      .catch((error) => dispatch(fetchingDuckError(error)))
+  }
+}
+
 const initialState = {
   isFetching: true,
   error: ''
 }
-
 export default function ducks (state = initialState, action) {
   switch (action.type) {
     case FETCHING_DUCK :
@@ -77,17 +86,12 @@ export default function ducks (state = initialState, action) {
         isFetching: true,
       }
     case ADD_DUCK :
+    case FETCHING_DUCK_SUCCESS :
       return {
         ...state,
         error: '',
         isFetching: false,
         [action.duck.duckId]: action.duck,
-      }
-    case FETCHING_DUCK_SUCCESS :
-      return {
-        ...state,
-        isFetching: false,
-        error: action.error,
       }
     case FETCHING_DUCK_ERROR :
       return {
