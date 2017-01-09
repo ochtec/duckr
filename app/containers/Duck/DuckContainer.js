@@ -50,7 +50,7 @@ function mapStateToProps ({ducks, likeCount, usersLikes}, props) {
     hideLikeCount: props.hideLikeCount,
     hideReplyBtn: props.hideReplyBtn,
     isLiked: usersLikes[props.duckId] === true,
-    numberOfLikes: likeCount[props.duckId],
+    numberOfLikes: likeCount.get(props.duckId),
   }
 }
 
